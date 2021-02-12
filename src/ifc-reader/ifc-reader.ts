@@ -1,11 +1,9 @@
 import { html } from "lit-html";
-import { customElement, property } from "@simple-html/core";
+import { customElement } from "@simple-html/core";
 import { Lexer } from "./parser";
 
 @customElement("ifc-reader")
 export class IFCReader extends HTMLElement {
-  @property() atts = "";
-
   public render() {
     return html`
       <style>
@@ -15,7 +13,6 @@ export class IFCReader extends HTMLElement {
       </style>
 
       <input @change=${this.openFile} type="file" />
-      ${new Date().toISOString()} ${this.atts}
     `;
   }
 
@@ -39,17 +36,13 @@ export class IFCReader extends HTMLElement {
           tokens.push(t);
         }
       }
-      //IFC_ID.set(ID, tokens);
+      // do something with data?
     }
     let readFrom = 0;
     let readTo = 0;
     let spareChunk = "";
     let dataBlockFound = false;
-    const IFC_ID = new Map();
-    const IFC_NAME = new Map();
 
-    window.IFC_ID = IFC_ID;
-    window.IFC_NAME = IFC_NAME;
     reader.onload = () => {
       const byteLength = (reader.result as ArrayBuffer).byteLength;
 
@@ -106,7 +99,6 @@ export class IFCReader extends HTMLElement {
     };
     reader.onloadend = () => {
       console.timeEnd("file");
-      this.atts = window.IFC_ID.size;
     };
     reader.onprogress = (e) => {
       console.log(e);

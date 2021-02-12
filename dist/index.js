@@ -1171,21 +1171,6 @@
   }
   var html = (strings, ...values) => new TemplateResult(strings, values, "html", defaultTemplateProcessor);
 
-  // node_modules/@simple-html/core/dist/requestRender.js
-  function requestRender(ctx) {
-    if (ctx.isConnected) {
-      if (ctx.__wait) {
-      } else {
-        ctx.__wait = true;
-        requestAnimationFrame(async () => {
-          await Promise.resolve(true);
-          ctx.render.call(ctx);
-          ctx.__wait = false;
-        });
-      }
-    }
-  }
-
   // node_modules/@simple-html/core/dist/symbols.js
   function initSymbolCache() {
     if (!globalThis._STD_SYMBOL) {
@@ -1202,9 +1187,6 @@
   }
   function stdSymbol() {
     return globalThis._STD_SYMBOL;
-  }
-  function propSymbol() {
-    return globalThis._PROP_SYMBOL;
   }
   function getObservedAttributesMapSymbol() {
     return stdSymbol().observedAttributesMap;
@@ -1224,39 +1206,7 @@
   function getTransmitterSymbol() {
     return stdSymbol().transmitter;
   }
-  function getPropSymbol(name) {
-    if (!propSymbol()[name]) {
-      propSymbol()[name] = Symbol(name);
-      return propSymbol()[name];
-    } else {
-      return propSymbol()[name];
-    }
-  }
   initSymbolCache();
-
-  // node_modules/@simple-html/core/dist/property.js
-  function property(options = {}) {
-    return function reg(_class, prop) {
-      Object.defineProperty(_class, prop, {
-        get: function() {
-          return this[getPropSymbol(this.tagName + "_" + prop)];
-        },
-        set: function(x) {
-          const oldValue = this[getPropSymbol(this.tagName + "_" + prop)];
-          this[getPropSymbol(this.tagName + "_" + prop)] = x;
-          if (this[getConstructorDoneSymbol()]) {
-            if (this.valuesChangedCallback && oldValue !== x) {
-              this.valuesChangedCallback.call(this, "property", prop, oldValue, x);
-            }
-            if (oldValue !== x && !options.skipRender) {
-              requestRender(this);
-            }
-          }
-        },
-        configurable: true
-      });
-    };
-  }
 
   // node_modules/@simple-html/core/dist/customElement.js
   function customElement(elementName, extended) {
@@ -1525,10 +1475,6 @@
 
   // src/ifc-reader/ifc-reader.ts
   var IFCReader = class extends HTMLElement {
-    constructor() {
-      super(...arguments);
-      this.atts = "";
-    }
     render() {
       return html`
       <style>
@@ -1538,7 +1484,6 @@
       </style>
 
       <input @change=${this.openFile} type="file" />
-      ${new Date().toISOString()} ${this.atts}
     `;
     }
     openFile(e) {
@@ -1564,10 +1509,6 @@
       let readTo = 0;
       let spareChunk = "";
       let dataBlockFound = false;
-      const IFC_ID = new Map();
-      const IFC_NAME = new Map();
-      window.IFC_ID = IFC_ID;
-      window.IFC_NAME = IFC_NAME;
       reader.onload = () => {
         const byteLength = reader.result.byteLength;
         while (readTo < byteLength) {
@@ -1612,7 +1553,6 @@
       };
       reader.onloadend = () => {
         console.timeEnd("file");
-        this.atts = window.IFC_ID.size;
       };
       reader.onprogress = (e2) => {
         console.log(e2);
@@ -1620,9 +1560,6 @@
       reader.readAsArrayBuffer(file);
     }
   };
-  __decorate([
-    property()
-  ], IFCReader.prototype, "atts", 2);
   IFCReader = __decorate([
     customElement("ifc-reader")
   ], IFCReader);
