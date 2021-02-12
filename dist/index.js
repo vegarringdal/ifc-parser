@@ -378,12 +378,7 @@
     });
     var app_root_default = class extends HTMLElement {
       render() {
-        return html`
-            
-            <ifc-reader class="p-2"></ifc-reader>
-    
-
-      `;
+        return html` <ifc-reader class="p-2"></ifc-reader> `;
       }
     };
     app_root_default = __decorate([
@@ -1357,7 +1352,7 @@
     });
   }
 
-  // src/ifc-reader/parser.ts
+  // src/ifc-reader/lexer.ts
   var Lexer = class {
     constructor() {
       this.nextToken = function() {
@@ -1473,6 +1468,22 @@
     }
   };
 
+  // src/ifc-reader/parser.ts
+  var lexer = new Lexer();
+  function lexString(d) {
+    lexer.input(d);
+    let ID = lexer.nextToken();
+    let NAME = lexer.nextToken();
+    let tokens = [ID, NAME];
+    let t;
+    while (t !== null) {
+      t = lexer.nextToken();
+      if (t) {
+        tokens.push(t);
+      }
+    }
+  }
+
   // src/ifc-reader/ifc-reader.ts
   var IFCReader = class extends HTMLElement {
     render() {
@@ -1483,7 +1494,7 @@
         }
       </style>
 
-      <input @change=${this.openFile} type="file" />
+      <input @change=${this.openFile} type="file"/>
     `;
     }
     openFile(e) {
@@ -1491,20 +1502,6 @@
       const file = e.target.files[0];
       const reader = new FileReader();
       const encoder = new TextDecoder();
-      const lexer = new Lexer();
-      function lexString(d) {
-        lexer.input(d);
-        let ID = lexer.nextToken();
-        let NAME = lexer.nextToken();
-        let tokens = [NAME];
-        let t;
-        while (t !== null) {
-          t = lexer.nextToken();
-          if (t) {
-            tokens.push(t);
-          }
-        }
-      }
       let readFrom = 0;
       let readTo = 0;
       let spareChunk = "";

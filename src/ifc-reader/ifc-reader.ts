@@ -1,6 +1,6 @@
 import { html } from "lit-html";
 import { customElement } from "@simple-html/core";
-import { Lexer } from "./parser";
+import { lexString } from "./parser";
 
 @customElement("ifc-reader")
 export class IFCReader extends HTMLElement {
@@ -12,7 +12,7 @@ export class IFCReader extends HTMLElement {
         }
       </style>
 
-      <input @change=${this.openFile} type="file" />
+      <input @change=${this.openFile} type="file"/>
     `;
   }
 
@@ -22,22 +22,7 @@ export class IFCReader extends HTMLElement {
 
     const reader = new FileReader();
     const encoder = new TextDecoder();
-    const lexer = new Lexer();
-    function lexString(d) {
-      lexer.input(d);
-      // first is always ID
-      let ID = lexer.nextToken();
-      let NAME = lexer.nextToken();
-      let tokens = [NAME];
-      let t;
-      while (t !== null) {
-        t = lexer.nextToken();
-        if (t) {
-          tokens.push(t);
-        }
-      }
-      // do something with data?
-    }
+
     let readFrom = 0;
     let readTo = 0;
     let spareChunk = "";
@@ -58,6 +43,7 @@ export class IFCReader extends HTMLElement {
           spareChunk = "";
         }
 
+        // find data part
         if (!dataBlockFound) {
           for (let i = 0; i < data.length; i++) {
             const d1 = data[i - 4]; // D
@@ -76,6 +62,7 @@ export class IFCReader extends HTMLElement {
             }
           }
         }
+
         let lastI = 0;
         for (let i = 0; i < data.length; i++) {
           const d1 = data[i - 1]; // ;
