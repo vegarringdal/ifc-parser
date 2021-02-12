@@ -56,7 +56,7 @@ export class IFCReader extends HTMLElement {
         rows.forEach((row) => {
           if (dataBlockFound) {
             let rowData = row;
-            if (rowData[rowData.length - 2] !== ";") {
+            if (rowData[rowData.length - 2] && rowData[rowData.length - 2] !== ";") {
               spareChunk = spareChunk + "\n" + rowData;
             } else {
               lexer.input(rowData);
