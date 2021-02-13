@@ -41,15 +41,18 @@ export function lexString(d: string) {
         }
       }
     }
+
     if (ID.value === "#13") {
       console.log(ID.value);
       console.log(NAME.value);
       console.log(JSON.stringify(args));
     }
+
     if (ID && ID.value) {
       x.push([ID.value, NAME.value, args]);
     }
-    if (x.length > 1000) {
+
+    if (x.length > 25000) {
       (self as any).postMessage(x);
       x = [];
     }

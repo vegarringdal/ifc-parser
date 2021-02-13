@@ -15,8 +15,12 @@ import("./app-root").then(() => {
 export const readerWorker = new Worker("readerWorker.js");
 let x = [];
 readerWorker.addEventListener("message", (e) => {
+  if (e.data === "start") {
+    console.time("back");
+  }
   if (e.data === "done") {
-    console.log("done:" + x.length);
+    console.timeEnd("back");
+    console.log("array length:", x.length);
   }
   if (e.data?.length) {
     x = x.concat(e.data);

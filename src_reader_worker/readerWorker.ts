@@ -5,6 +5,7 @@ let rows = 0;
 onmessage = function (e) {
   console.log("worker-called");
   console.time("file");
+  (self as any).postMessage("start");
   rows = 0;
   const file = e.data;
 
