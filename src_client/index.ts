@@ -12,7 +12,7 @@ import("./app-root").then(() => {
   }
 });
 
-
+export const readerWorker = new Worker('readerWorker.js');
 
 
 

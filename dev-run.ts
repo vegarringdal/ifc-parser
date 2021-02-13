@@ -40,12 +40,12 @@ single(
     },
     entryPoints: ["./src_reader_worker/readerWorker.ts"],
     outfile: "./dist/readerWorker.js",
-    minify: true,
+    minify: false,
     bundle: true,
     platform: "browser",
-    sourcemap: false,
+    sourcemap: true,
     logLevel: "error",
-    incremental: false,
+    incremental: true,
   }
 );
 
