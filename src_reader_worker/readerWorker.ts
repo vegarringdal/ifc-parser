@@ -3,7 +3,7 @@ import { lexString } from "parser";
 let rows = 0;
 
 onmessage = function (e) {
-  console.log('worker-called')
+  console.log("worker-called");
   console.time("file");
   rows = 0;
   const file = e.data;
@@ -62,17 +62,12 @@ onmessage = function (e) {
       const buffer = reader.result.slice(readFrom, readTo) as ArrayBuffer;
       let data = encoder.decode(buffer);
 
-      let tempString = "";
-      for (let y = 0; y < data.length; y++) {
-        const f = data.charAt(y);
-        const ff = data.charAt(y + 1);
-        if (f === ";" && (ff === "\n" || ff === "\r")) {
-          lexString(tempString);
-          tempString = "";
-          y++;
+      const r = data.split(/;\n/);
+      for (let i = 0; i < r.length; i++) {
+        if (r[i]) {
+          lexString(r[i]);
           rows++;
         }
-        tempString = tempString + f;
       }
 
       readFrom = readTo;
