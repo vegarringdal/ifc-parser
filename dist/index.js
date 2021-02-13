@@ -1521,22 +1521,29 @@
           i++;
         }
         while (readTo < byteLength) {
-          let i2 = readFrom;
+          let i2 = readFrom + 4e3;
           while (i2 !== byteLength) {
             const buffer2 = reader.result.slice(i2, i2 + 2);
-            const x = new Uint8Array(buffer2);
-            if (x[0] === 10 || x[0] === 13) {
+            const x2 = new Uint8Array(buffer2);
+            if (x2[0] === 10 || x2[0] === 13) {
               readTo = i2 + 1;
-              if (x[1] === 10 || x[1] === 13) {
+              if (x2[1] === 10 || x2[1] === 13) {
                 readTo = i2 + 2;
               }
+              break;
+            }
+            if (i2 >= byteLength) {
+              readTo = byteLength;
               break;
             }
             i2++;
           }
           const buffer = reader.result.slice(readFrom, readTo);
           let data = encoder.decode(buffer);
-          lexString(data);
+          const x = data.split("\r");
+          for (let i3 = 0; i3 < x.length; i3++) {
+            lexString(x[i3]);
+          }
           readFrom = readTo;
         }
       };

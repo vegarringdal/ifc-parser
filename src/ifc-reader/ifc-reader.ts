@@ -32,7 +32,6 @@ export class IFCReader extends HTMLElement {
     reader.onload = () => {
       const byteLength = (reader.result as ArrayBuffer).byteLength;
 
-
       // first part we read until we get the data block
       let i = readFrom;
       const y = dataTagUintArray;
@@ -55,9 +54,7 @@ export class IFCReader extends HTMLElement {
 
       // now we have the datablock we will read line by line
       while (readTo < byteLength) {
-        
-        
-        let i = readFrom;
+        let i = readFrom + 4000;
         // get next line break
         while (i !== byteLength) {
           const buffer = reader.result.slice(i, i + 2) as ArrayBuffer;
@@ -70,13 +67,19 @@ export class IFCReader extends HTMLElement {
             }
             break;
           }
+          if(i >= byteLength){
+            readTo = byteLength
+            break;
+          }
           i++;
         }
 
         const buffer = reader.result.slice(readFrom, readTo) as ArrayBuffer;
         let data = encoder.decode(buffer);
-
-        lexString(data);
+        const x = data.split("\r");
+        for (let i = 0; i < x.length; i++) {
+          lexString(x[i]);
+        }
 
         readFrom = readTo;
       }
