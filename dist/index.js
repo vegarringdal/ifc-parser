@@ -1494,7 +1494,7 @@
         }
       </style>
 
-      <input @change=${this.openFile} type="file"/>
+      <input @change=${this.openFile} type="file" />
     `;
     }
     openFile(e) {
@@ -1502,49 +1502,41 @@
       const file = e.target.files[0];
       const reader = new FileReader();
       const encoder = new TextDecoder();
+      const decoder = new TextEncoder();
+      const dataTagBuffer = decoder.encode("DATA;");
+      const dataTagUintArray = new Uint8Array(dataTagBuffer);
       let readFrom = 0;
       let readTo = 0;
-      let spareChunk = "";
-      let dataBlockFound = false;
       reader.onload = () => {
         const byteLength = reader.result.byteLength;
+        let i = readFrom;
+        const y = dataTagUintArray;
+        while (i !== byteLength) {
+          const buffer = reader.result.slice(i, i + 5);
+          const x = new Uint8Array(buffer);
+          if (x[0] === y[0] && x[1] === y[1] && x[2] === y[2] && x[3] === y[3] && x[4] === y[4]) {
+            readFrom = i + 5;
+            break;
+          }
+          i++;
+        }
         while (readTo < byteLength) {
-          readTo = readTo + 2024;
-          if (readTo >= byteLength) {
-            readTo = byteLength;
+          let i2 = readFrom;
+          while (i2 !== byteLength) {
+            const buffer2 = reader.result.slice(i2, i2 + 2);
+            const x = new Uint8Array(buffer2);
+            if (x[0] === 10 || x[0] === 13) {
+              readTo = i2 + 1;
+              if (x[1] === 10 || x[1] === 13) {
+                readTo = i2 + 2;
+              }
+              break;
+            }
+            i2++;
           }
           const buffer = reader.result.slice(readFrom, readTo);
           let data = encoder.decode(buffer);
-          if (spareChunk) {
-            data = spareChunk + data;
-            spareChunk = "";
-          }
-          if (!dataBlockFound) {
-            for (let i = 0; i < data.length; i++) {
-              const d1 = data[i - 4];
-              const d2 = data[i - 3];
-              const d3 = data[i - 2];
-              const d4 = data[i - 1];
-              const d5 = data[i];
-              if ((d1 || "") + (d2 || "") + (d3 || "") + (d4 || "") + (d5 || "") === "DATA;") {
-                dataBlockFound = true;
-                data = data.substring(i, data.length - 1);
-                break;
-              }
-            }
-          }
-          let lastI = 0;
-          for (let i = 0; i < data.length; i++) {
-            const d1 = data[i - 1];
-            const d2 = data[i];
-            if ((d1 || "") + (d2 || "") === ";\n" || (d1 || "") + (d2 || "") === ";\r") {
-              lexString(data.substring(lastI, i));
-              lastI = i;
-            }
-          }
-          if (lastI < data.length) {
-            spareChunk = data.substring(lastI, data.length);
-          }
+          lexString(data);
           readFrom = readTo;
         }
       };
