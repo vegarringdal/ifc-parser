@@ -1,4 +1,4 @@
-import { lexString } from "parser";
+import { getLast, lexString } from "parser";
 
 let rows = 0;
 
@@ -62,7 +62,10 @@ onmessage = function (e) {
       const buffer = reader.result.slice(readFrom, readTo) as ArrayBuffer;
       let data = encoder.decode(buffer);
 
-      const r = data.split(/;\n/);
+      let r = data.split(/;\n/);
+      if (r.length === 1) {
+        r = data.split(/;\r/);
+      }
       for (let i = 0; i < r.length; i++) {
         if (r[i]) {
           lexString(r[i]);
@@ -74,6 +77,8 @@ onmessage = function (e) {
     }
   };
   reader.onloadend = () => {
+    (self as any).postMessage(getLast());
+    (self as any).postMessage("done");
     console.timeEnd("file");
     console.log(rows);
   };

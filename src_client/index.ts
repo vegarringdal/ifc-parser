@@ -12,7 +12,13 @@ import("./app-root").then(() => {
   }
 });
 
-export const readerWorker = new Worker('readerWorker.js');
-
-
-
+export const readerWorker = new Worker("readerWorker.js");
+let x = [];
+readerWorker.addEventListener("message", (e) => {
+  if (e.data === "done") {
+    console.log("done:" + x.length);
+  }
+  if (e.data?.length) {
+    x = x.concat(e.data);
+  }
+});
