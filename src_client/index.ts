@@ -17,7 +17,6 @@ export const readerWorker = new Worker("readerWorker.js");
 let keep: any = [];
 
 readerWorker.addEventListener("message", (e) => {
-
   /*
   I send back parsed data evry 25 k rows
   maybe I should send this to new worker?
@@ -30,14 +29,13 @@ readerWorker.addEventListener("message", (e) => {
 
   */
 
-
   if (e.data === "start") {
     keep = [];
     console.time("back, this is total time..");
   }
   if (e.data === "done") {
     console.timeEnd("back, this is total time..");
-    keep.forEach((e) => {
+    keep.forEach((e: any) => {
       console.log(e);
     });
   }
