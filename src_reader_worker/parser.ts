@@ -42,11 +42,12 @@ export function lexString(d: string) {
       }
     }
 
+/*  just for fun, I printed these to se resutl
     if (ID.value === "#13") {
       console.log(ID.value);
       console.log(NAME.value);
       console.log(JSON.stringify(args));
-    }
+    } */
 
     if (ID && ID.value) {
       x.push([ID.value, NAME.value, args]);
