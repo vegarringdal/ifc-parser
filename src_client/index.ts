@@ -21,6 +21,10 @@ readerWorker.addEventListener("message", (e) => {
   if (e.data === "done") {
     console.timeEnd("back");
     console.log("array length:", x.length);
+    console.log("row:", x[500]);
+    console.log("row:", x[1500]);
+    console.log("row:", x[2500]);
+    console.log("row:", x[4500]);
   }
   if (e.data?.length) {
     x = x.concat(e.data);

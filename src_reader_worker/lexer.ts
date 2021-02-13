@@ -39,7 +39,6 @@ export class Lexer {
     if (op !== undefined) {
       return { name: op, value: c, pos: this.pos++ };
     } else {
-      // Not an operator - so it's the beginning of another token.
       switch (true) {
         case this.isID(c):
           return this.processID();
