@@ -15,5 +15,9 @@ export function lexString(d: string) {
       tokens.push(t);
     }
   }
+
+  if(ID && ID.value === '#50'){
+    console.log(JSON.stringify(tokens))
+  }
   // do something with data?
 }

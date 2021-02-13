@@ -1,0 +1,10 @@
+[
+  { "name": "ID", "value": "#550", "pos": 0 },
+  { "name": "IDENTIFIER", "value": "IFCQUANTITYAREA", "pos": 6 },
+  { "name": "L_PAREN", "value": "(", "pos": 21 },
+  { "name": "STRING", "value": "CrossSectionArea", "pos": 22 },
+  { "name": "IDENTIFIER", "value": "$", "pos": 41 },
+  { "name": "IDENTIFIER", "value": "$", "pos": 43 },
+  { "name": "IDENTIFIER", "value": "0.0759", "pos": 45 },
+  { "name": "R_PAREN", "value": ")", "pos": 51 }
+]

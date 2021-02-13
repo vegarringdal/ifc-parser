@@ -76,7 +76,7 @@ export class IFCReader extends HTMLElement {
 
         const buffer = reader.result.slice(readFrom, readTo) as ArrayBuffer;
         let data = encoder.decode(buffer);
-        const x = data.split("\r");
+        const x = data.split("\n");
         for (let i = 0; i < x.length; i++) {
           lexString(x[i]);
         }

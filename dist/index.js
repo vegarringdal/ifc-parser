@@ -1482,6 +1482,9 @@
         tokens.push(t);
       }
     }
+    if (ID && ID.value === "#50") {
+      console.log(JSON.stringify(tokens));
+    }
   }
 
   // src/ifc-reader/ifc-reader.ts
@@ -1540,7 +1543,7 @@
           }
           const buffer = reader.result.slice(readFrom, readTo);
           let data = encoder.decode(buffer);
-          const x = data.split("\r");
+          const x = data.split("\n");
           for (let i3 = 0; i3 < x.length; i3++) {
             lexString(x[i3]);
           }
