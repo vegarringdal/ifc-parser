@@ -16,15 +16,16 @@ export function getLength() {
   // lets print one to test
 
   const x = dataRows[ifcRelContainedInSpatialStructure[0]];
-  console.log("-----print one------");
-  console.log(x.id);
-  console.log(x.name);
+  console.log("-------------------------------------------");
+  console.log("ifcRelContainedInSpatialStructure Sample:");
+  console.log("ID:", x.id);
   console.log(x.args);
+  console.log("-------------------------------------------");
   console.log(
     "ifcRelContainedInSpatialStructure count:" +
       ifcRelContainedInSpatialStructure.length
   );
-
+  console.log("-------------------------------------------");
   console.log("total datarow count:" + dataRows.length);
 
   return dataRows.length;
