@@ -41,7 +41,7 @@ function processLine(tokens: any[]) {
       x.push([ID.value, NAME.value, args]);
     }
 
-    if (x.length > 25000) {
+    if (x.length > 1000) { 
       (self as any).postMessage(x);
       x = [];
     }

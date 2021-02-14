@@ -31,6 +31,7 @@ readerWorker.addEventListener("message", (e) => {
 
   if (e.data === "start") {
     keep = [];
+    console.log('started')
     console.time("back, this is total time..");
   }
   if (e.data === "done") {

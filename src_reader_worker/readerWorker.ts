@@ -1,12 +1,10 @@
 import { getLast, lexString } from "parser";
 
-let rows = 0;
-
 onmessage = function (e) {
   console.log("worker-called");
   console.time("file");
   (self as any).postMessage("start");
-  rows = 0;
+
   const file = e.data;
 
   const reader = new FileReader();
@@ -43,7 +41,7 @@ onmessage = function (e) {
 
     // now we have the datablock we will read line by line
     while (readTo < byteLength) {
-      let i = readFrom + 1500000;
+      let i = readFrom + 1000000;
       // get next line break
       while (i !== byteLength) {
         const buffer = reader.result.slice(i, i + 2) as ArrayBuffer;
@@ -72,7 +70,6 @@ onmessage = function (e) {
     (self as any).postMessage(getLast());
     (self as any).postMessage("done");
     console.timeEnd("file");
-    console.log(rows);
   };
   reader.onprogress = (e) => {
     console.log(e);
