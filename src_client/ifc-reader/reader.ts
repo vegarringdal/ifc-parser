@@ -64,7 +64,7 @@ export function readFile(data: any) {
     }
   };
   reader.onloadend = () => {
-    console.log(getLength());
+    getLength();
     console.timeEnd("file");
   };
   reader.onprogress = (e) => {

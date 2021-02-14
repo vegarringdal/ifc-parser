@@ -1,6 +1,6 @@
 import { html } from "lit-html";
 import { customElement } from "@simple-html/core";
-import { readFile } from "./readerWorker";
+import { readFile } from "./reader";
 
 @customElement("ifc-reader")
 export class IFCReader extends HTMLElement {

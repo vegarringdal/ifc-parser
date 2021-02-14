@@ -3,7 +3,7 @@
 // todo, I need to build up a map of all types
 
 
-export function proxyController(id: string, name: string, _args: any[]) {
+export function proxyController(id: string, name: string, args: any[]) {
   const handler = {
     get: function (_target: any, prop: string, _receiver: any) {
       if (prop === "name") {
@@ -11,6 +11,9 @@ export function proxyController(id: string, name: string, _args: any[]) {
       }
       if (prop === "id") {
         return id;
+      }
+      if (prop === "args") {
+        return args;
       }
       return undefined;
     },

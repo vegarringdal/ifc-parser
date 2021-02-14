@@ -1,16 +1,33 @@
 import { Lexer } from "./lexer";
 import { proxyController } from "./proxyController";
 
-let x: any[] = [];
+let dataRows: any[] = [];
+let ifcRelContainedInSpatialStructure: number[] = [];
 
 export function getRow(no: number) {
-  return x[no];
+  return dataRows[no];
+}
+
+export function getIfcRelContainedInSpatialStructureIDs() {
+  return ifcRelContainedInSpatialStructure;
 }
 
 export function getLength() {
-  console.log(x[13].name);
-  console.log(x[13].id);
-  return x.length;
+  // lets print one to test
+
+  const x = dataRows[ifcRelContainedInSpatialStructure[0]];
+  console.log("-----print one------");
+  console.log(x.id);
+  console.log(x.name);
+  console.log(x.args);
+  console.log(
+    "ifcRelContainedInSpatialStructure count:" +
+      ifcRelContainedInSpatialStructure.length
+  );
+
+  console.log("total datarow count:" + dataRows.length);
+
+  return dataRows.length;
 }
 
 function processLine(tokens: any[]) {
@@ -35,15 +52,11 @@ function processLine(tokens: any[]) {
       }
     }
 
-    // just for fun, I printed these to se resutl
-    if (ID.value === "#13") {
-      console.log(ID.value);
-      console.log(NAME.value);
-      console.log(JSON.stringify(args));
-    }
-
     if (ID && ID.value) {
-      x.push(proxyController(ID.value, NAME.value, args));
+      dataRows.push(proxyController(ID.value, NAME.value, args));
+      if (NAME.value === "IFCRELCONTAINEDINSPATIALSTRUCTURE") {
+        ifcRelContainedInSpatialStructure.push(dataRows.length - 1);
+      }
     }
   }
 }
