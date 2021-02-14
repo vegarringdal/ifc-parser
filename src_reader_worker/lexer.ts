@@ -5,7 +5,8 @@ export class Lexer {
   pos: number;
   buf: any;
   buflen: number;
-  optable: { ",": string; "(": string; ")": string };
+  optable: { ",": string; ";": string; "(": string; ")": string; };
+
 
   constructor() {
     this.pos = 0;
@@ -14,9 +15,10 @@ export class Lexer {
 
     // Operator table, mapping operator -> token name
     this.optable = {
-      ",": "COMMA",
-      "(": "L_PAREN",
-      ")": "R_PAREN",
+      ",": "C",
+      ";": "E",
+      "(": "L",
+      ")": "R",
     };
   }
 
@@ -100,7 +102,7 @@ export class Lexer {
     }
 
     var tok = {
-      name: "NUMBER",
+      name: "N",
       value: this.buf.substring(this.pos, endpos),
       pos: this.pos,
     };
@@ -115,7 +117,7 @@ export class Lexer {
     }
 
     var tok = {
-      name: "IDENTIFIER",
+      name: "I",
       value: this.buf.substring(this.pos, endpos),
       pos: this.pos,
     };
@@ -129,7 +131,7 @@ export class Lexer {
       throw Error("Unterminated STRING at " + this.pos);
     } else {
       var tok = {
-        name: "STRING",
+        name: "S",
         value: this.buf.substring(this.pos + 1, end_index),
         pos: this.pos,
       };

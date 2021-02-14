@@ -43,7 +43,7 @@ onmessage = function (e) {
 
     // now we have the datablock we will read line by line
     while (readTo < byteLength) {
-      let i = readFrom + 15000;
+      let i = readFrom + 1500000;
       // get next line break
       while (i !== byteLength) {
         const buffer = reader.result.slice(i, i + 2) as ArrayBuffer;

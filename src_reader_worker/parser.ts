@@ -8,25 +8,13 @@ export function getLast() {
   return y;
 }
 
-const lexer = new Lexer();
-export function lexString(d: string) {
-  lexer.input(d);
-  // first is always ID
-  let ID = lexer.nextToken();
-  // next is name
-  let NAME = lexer.nextToken();
-  let tokens = [];
-  let t;
-  while (t !== null) {
-    t = lexer.nextToken();
-    if (t) {
-      tokens.push(t);
-    }
-  }
+function processLine(tokens: any[]) {
+  const ID = tokens[0];
+  const NAME = tokens[1];
 
-  if (tokens[0] && tokens[0].value === "(") {
+  if (tokens[2] && tokens[2].value === "(") {
     let args = [];
-    for (let i = 1; i < tokens.length; i++) {
+    for (let i = 3; i < tokens.length; i++) {
       if (tokens[i].value !== "(" && tokens[i].value !== ")") {
         args.push(tokens[i].value);
       } else {
@@ -42,12 +30,12 @@ export function lexString(d: string) {
       }
     }
 
-/*  just for fun, I printed these to se resutl
+    // just for fun, I printed these to se resutl
     if (ID.value === "#13") {
       console.log(ID.value);
       console.log(NAME.value);
       console.log(JSON.stringify(args));
-    } */
+    }
 
     if (ID && ID.value) {
       x.push([ID.value, NAME.value, args]);
@@ -56,6 +44,26 @@ export function lexString(d: string) {
     if (x.length > 25000) {
       (self as any).postMessage(x);
       x = [];
+    }
+  }
+}
+
+const lexer = new Lexer();
+export function lexString(d: string) {
+  lexer.input(d);
+  // first is always ID
+
+  let tokens = [];
+  let t;
+  while (t !== null) {
+    t = lexer.nextToken();
+    if (t && t.value === ";") {
+      processLine(tokens);
+      tokens = [];
+    } else {
+      if (t) {
+        tokens.push(t);
+      }
     }
   }
 
