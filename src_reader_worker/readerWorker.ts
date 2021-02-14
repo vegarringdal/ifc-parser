@@ -1,11 +1,26 @@
-import { getLast, lexString } from "parser";
-
 let rows = 0;
 
+let channel: any = null;
+
+let readerWorker1: Worker;
+let readerWorker2: Worker;
+let readerWorker3: Worker;
+
+let toggle = 0;
+
 onmessage = function (e) {
+  if (e.data === "channel") {
+    readerWorker1 = new Worker("parserWorker.js");
+    readerWorker1.postMessage("channel", [e.ports[0]]);
+    readerWorker2 = new Worker("parserWorker.js");
+    readerWorker2.postMessage("channel", [e.ports[1]]);
+    readerWorker3 = new Worker("parserWorker.js");
+    readerWorker3.postMessage("channel", [e.ports[2]]);
+    return;
+  }
+
   console.log("worker-called");
   console.time("file");
-  (self as any).postMessage("start");
   rows = 0;
   const file = e.data;
 
@@ -17,6 +32,8 @@ onmessage = function (e) {
 
   let readFrom = 0;
   let readTo = 0;
+
+  let posts = 0;
 
   reader.onload = () => {
     const byteLength = (reader.result as ArrayBuffer).byteLength;
@@ -43,7 +60,7 @@ onmessage = function (e) {
 
     // now we have the datablock we will read line by line
     while (readTo < byteLength) {
-      let i = readFrom + 15000;
+      let i = readFrom + 5000000;
       // get next line break
       while (i !== byteLength) {
         const buffer = reader.result.slice(i, i + 2) as ArrayBuffer;
@@ -63,28 +80,36 @@ onmessage = function (e) {
       const buffer = reader.result.slice(readFrom, readTo) as ArrayBuffer;
       let data = encoder.decode(buffer);
 
-      let r = data.split(/;\n/);
-      if (r.length === 1) {
-        r = data.split(/;\r/);
+      if (toggle === 0) {
+        toggle = 1;
+        posts++;
+        readerWorker1.postMessage(data);
       }
-      for (let i = 0; i < r.length; i++) {
-        if (r[i]) {
-          lexString(r[i]);
-          rows++;
-        }
+      if (toggle === 1) {
+        toggle = 2;
+        posts++;
+        readerWorker2.postMessage(data);
+      }
+
+      if (toggle === 2) {
+        toggle = 0;
+        posts++;
+        readerWorker3.postMessage(data);
       }
 
       readFrom = readTo;
     }
   };
   reader.onloadend = () => {
-    (self as any).postMessage(getLast());
-    (self as any).postMessage("done");
     console.timeEnd("file");
-    console.log(rows);
+    self.postMessage(posts);
   };
   reader.onprogress = (e) => {
     console.log(e);
   };
   reader.readAsArrayBuffer(file);
 };
+
+/* var channel = new MessageChannel();
+channel.port1.postMessage('cool1')
+channel.port2.postMessage('cool2') */

@@ -49,6 +49,27 @@ single(
   }
 );
 
+/**
+ * client worker
+ */
+single(
+  { watch: "./src_parser_worker/**/*.ts" },
+  {
+    color: true,
+    define: {
+      DEVELOPMENT: true,
+    },
+    entryPoints: ["./src_parser_worker/parserWorker.ts"],
+    outfile: "./dist/parserWorker.js",
+    minify: false,
+    bundle: true,
+    platform: "browser",
+    sourcemap: true,
+    logLevel: "error",
+    incremental: true,
+  }
+);
+
 
 /**
  * client bundle

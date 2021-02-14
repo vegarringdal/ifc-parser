@@ -2,7 +2,7 @@ import { Lexer } from "./lexer";
 
 let x: any[] = [];
 
-export function getLast() {
+export function getParsed() {
   let y = x;
   x = [];
   return y;
@@ -42,7 +42,7 @@ export function lexString(d: string) {
       }
     }
 
-/*  just for fun, I printed these to se resutl
+    /*  just for fun, I printed these to se resutl
     if (ID.value === "#13") {
       console.log(ID.value);
       console.log(NAME.value);
@@ -52,12 +52,7 @@ export function lexString(d: string) {
     if (ID && ID.value) {
       x.push([ID.value, NAME.value, args]);
     }
-
-    if (x.length > 25000) {
-      (self as any).postMessage(x);
-      x = [];
-    }
-  }
+  } 
 
   // do something with data?
 }

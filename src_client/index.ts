@@ -12,44 +12,55 @@ import("./app-root").then(() => {
   }
 });
 
-export const readerWorker = new Worker("readerWorker.js");
+let y: any = [];
 
-let keep: any = [];
+let posts = 0;
+let recived = 0;
+
+var channel1 = new MessageChannel();
+channel1.port2.onmessage = (e) => {
+  y = y.concat(e.data);
+  recived++;
+  if (posts === recived) {
+    console.log("done", y.length);
+    console.timeEnd("xx");
+  }
+};
+
+var channel2 = new MessageChannel();
+channel2.port2.onmessage = (e) => {
+  y = y.concat(e.data);
+  recived++;
+  if (posts === recived) {
+    console.log("done", y.length);
+    console.timeEnd("xx");
+  }
+};
+
+var channel3 = new MessageChannel();
+channel3.port2.onmessage = (e) => {
+  y = y.concat(e.data);
+  recived++;
+  if (posts === recived) {
+    console.log("done", y.length);
+    console.timeEnd("xx");
+  }
+};
+
+console.log("worker");
+export const readerWorker = new Worker("readerWorker.js");
+readerWorker.postMessage("channel", [
+  channel1.port1,
+  channel2.port1,
+  channel3.port1,
+]);
 
 readerWorker.addEventListener("message", (e) => {
-  /*
-  I send back parsed data evry 25 k rows
-  maybe I should send this to new worker?
-
-  I should build up map so we know what each item of array is
-  first is always ID then NAME
-  but rest we need a map for.
-  then we can wrap it in a js proxy to save memeory
-  make json will kill unit using IFC.js
-
-  */
-
-  if (e.data === "start") {
-    keep = [];
-    console.time("back, this is total time..");
-  }
-  if (e.data === "done") {
-    console.timeEnd("back, this is total time..");
-    keep.forEach((e: any) => {
-      console.log(e);
-    });
-  }
-  if (Array.isArray(e.data)) {
-    e.data.forEach((r: any) => {
-      if (
-        r[1] === "IFCPROJECT" ||
-        r[1] === "IFCSITE" ||
-        r[1] === "IFCBUILDING" ||
-        r[1] === "IFCBUILDINGSTORY" ||
-        r[1] === "IFCSPACES"
-      ) {
-        keep.push(r);
-      }
-    });
+  posts = e.data;
+  console.time("xx");
+  if (posts === recived) {
+    console.log("done", y.length);
+    console.timeEnd("xx");
+    console.log(y[0]);
   }
 });
