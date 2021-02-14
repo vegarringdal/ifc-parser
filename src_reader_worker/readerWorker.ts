@@ -63,16 +63,7 @@ onmessage = function (e) {
       const buffer = reader.result.slice(readFrom, readTo) as ArrayBuffer;
       let data = encoder.decode(buffer);
 
-      let r = data.split(/;\n/);
-      if (r.length === 1) {
-        r = data.split(/;\r/);
-      }
-      for (let i = 0; i < r.length; i++) {
-        if (r[i]) {
-          lexString(r[i]);
-          rows++;
-        }
-      }
+      lexString(data);
 
       readFrom = readTo;
     }

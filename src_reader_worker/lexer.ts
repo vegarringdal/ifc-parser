@@ -149,8 +149,7 @@ export class Lexer {
         c === "\r" ||
         c === "\n" ||
         c === "," ||
-        c === "=" ||
-        c === ";"
+        c === "=" 
       ) {
         this.pos++;
       } else {
