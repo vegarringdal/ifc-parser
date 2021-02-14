@@ -1,11 +1,8 @@
-import { getLast, lexString } from "parser";
+import { getLength, lexString } from "./parser";
 
-onmessage = function (e) {
-  console.log("worker-called");
+export function readFile(data: any) {
   console.time("file");
-  (self as any).postMessage("start");
-
-  const file = e.data;
+  const file = data;
 
   const reader = new FileReader();
   const encoder = new TextDecoder();
@@ -67,12 +64,11 @@ onmessage = function (e) {
     }
   };
   reader.onloadend = () => {
-    (self as any).postMessage(getLast());
-    (self as any).postMessage("done");
+    console.log(getLength());
     console.timeEnd("file");
   };
   reader.onprogress = (e) => {
     console.log(e);
   };
   reader.readAsArrayBuffer(file);
-};
+}

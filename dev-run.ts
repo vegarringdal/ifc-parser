@@ -4,7 +4,7 @@ import {
   client,
   postcssPlugin,
   single,
-  TypeChecker
+  TypeChecker,
 } from "esbuild-helpers";
 
 clearFolders("dist");
@@ -21,34 +21,13 @@ single(
     },
     entryPoints: ["./src_client/index.css"],
     outfile: "./dist/index.css",
-    plugins: [postcssPlugin([require("tailwindcss")("./tailwindcss.dev.config.js")])],
+    plugins: [
+      postcssPlugin([require("tailwindcss")("./tailwindcss.dev.config.js")]),
+    ],
     logLevel: "error",
     incremental: true,
   }
 );
-
-
-/**
- * client worker
- */
-single(
-  { watch: "./src_reader_worker/**/*.ts" },
-  {
-    color: true,
-    define: {
-      DEVELOPMENT: true,
-    },
-    entryPoints: ["./src_reader_worker/readerWorker.ts"],
-    outfile: "./dist/readerWorker.js",
-    minify: false,
-    bundle: true,
-    platform: "browser",
-    sourcemap: true,
-    logLevel: "error",
-    incremental: true,
-  }
-);
-
 
 /**
  * client bundle
@@ -98,24 +77,12 @@ addDefaultIndex({
         `,
 });
 
-
 const checker_client = TypeChecker({
   basePath: `./src_client`,
-  name: 'client type check',
-  tsConfig:'tsconfig.json'
+  name: "client type check",
+  tsConfig: "tsconfig.json",
 });
 
 checker_client.printSettings();
 checker_client.inspectAndPrint();
-checker_client.worker_watch(['./']);
-
-
-const checker_worker = TypeChecker({
-  basePath: `./src_reader_worker`,
-  name: 'worker type check',
-  tsConfig:'tsconfig.json'
-});
-
-checker_worker.printSettings();
-checker_worker.inspectAndPrint();
-checker_worker.worker_watch(['./']);
+checker_client.worker_watch(["./"]);

@@ -1,11 +1,16 @@
 import { Lexer } from "./lexer";
+import { proxyController } from "./proxyController";
 
 let x: any[] = [];
 
-export function getLast() {
-  let y = x;
-  x = [];
-  return y;
+export function getRow(no: number) {
+  return x[no];
+}
+
+export function getLength() {
+  console.log(x[13].name);
+  console.log(x[13].id);
+  return x.length;
 }
 
 function processLine(tokens: any[]) {
@@ -38,12 +43,7 @@ function processLine(tokens: any[]) {
     }
 
     if (ID && ID.value) {
-      x.push([ID.value, NAME.value, args]);
-    }
-
-    if (x.length > 1000) { 
-      (self as any).postMessage(x);
-      x = [];
+      x.push(proxyController(ID.value, NAME.value, args));
     }
   }
 }

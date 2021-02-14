@@ -1,6 +1,6 @@
 import { html } from "lit-html";
 import { customElement } from "@simple-html/core";
-import { readerWorker } from "index";
+import { readFile } from "./readerWorker";
 
 @customElement("ifc-reader")
 export class IFCReader extends HTMLElement {
@@ -18,6 +18,6 @@ export class IFCReader extends HTMLElement {
 
   openFile(e: any) {
     const file: File = e.target.files[0];
-    readerWorker.postMessage(file);
+    readFile(file);
   }
 }
