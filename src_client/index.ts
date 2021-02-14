@@ -35,12 +35,14 @@ readerWorker.addEventListener("message", (e) => {
   }
   if (e.data === "done") {
     console.timeEnd("back, this is total time..");
-    keep.forEach((e: any) => {
+    console.log(keep.length);
+    /* keep.forEach((e: any) => {
       console.log(e);
-    });
+    }); */
   }
   if (Array.isArray(e.data)) {
-    e.data.forEach((r: any) => {
+    keep.push(...e.data);
+    /* e.data.forEach((r: any) => {
       if (
         r[1] === "IFCPROJECT" ||
         r[1] === "IFCSITE" ||
@@ -50,6 +52,6 @@ readerWorker.addEventListener("message", (e) => {
       ) {
         keep.push(r);
       }
-    });
+    }); */
   }
 });
