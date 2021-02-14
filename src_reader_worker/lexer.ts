@@ -1,25 +1,14 @@
-
 // this is just a little weird project, took some lexer I found somewhere and rebuild it a little
 
 export class Lexer {
   pos: number;
   buf: any;
   buflen: number;
-  optable: { ",": string; ";": string; "(": string; ")": string; };
-
 
   constructor() {
     this.pos = 0;
     this.buf = null;
     this.buflen = 0;
-
-    // Operator table, mapping operator -> token name
-    this.optable = {
-      ",": "C",
-      ";": "E",
-      "(": "L",
-      ")": "R",
-    };
   }
 
   input(buf: string) {
@@ -35,10 +24,22 @@ export class Lexer {
       return null;
     }
 
-    var c = this.buf.charAt(this.pos);
+    const c = this.buf.charAt(this.pos);
+    let op;
+    if (c === ",") {
+      op = "C";
+    }
+    if (c === ";") {
+      op = "E";
+    }
+    if (c === "(") {
+      op = "L";
+    }
+    if (c === ")") {
+      op = "R";
+    }
 
-    var op = this.optable[c];
-    if (op !== undefined) {
+    if (op) {
       return { name: op, value: c, pos: this.pos++ };
     } else {
       switch (true) {
@@ -81,12 +82,12 @@ export class Lexer {
   }
 
   processID() {
-    var endpos = this.pos + 1;
+    let endpos = this.pos + 1;
     while (endpos < this.buflen && this.isDigit(this.buf.charAt(endpos))) {
       endpos++;
     }
 
-    var tok = {
+    const tok = {
       name: "ID",
       value: this.buf.substring(this.pos, endpos),
       pos: this.pos,
@@ -96,12 +97,12 @@ export class Lexer {
   }
 
   processNumber() {
-    var endpos = this.pos + 1;
+    let endpos = this.pos + 1;
     while (endpos < this.buflen && this.isDigit(this.buf.charAt(endpos))) {
       endpos++;
     }
 
-    var tok = {
+    const tok = {
       name: "N",
       value: this.buf.substring(this.pos, endpos),
       pos: this.pos,
@@ -111,12 +112,12 @@ export class Lexer {
   }
 
   processIdentifier() {
-    var endpos = this.pos + 1;
+    let endpos = this.pos + 1;
     while (endpos < this.buflen && this.isArg(this.buf.charAt(endpos))) {
       endpos++;
     }
 
-    var tok = {
+    const tok = {
       name: "I",
       value: this.buf.substring(this.pos, endpos),
       pos: this.pos,
@@ -126,11 +127,11 @@ export class Lexer {
   }
 
   processString() {
-    var end_index = this.buf.indexOf("'", this.pos + 1);
+    const end_index = this.buf.indexOf("'", this.pos + 1);
     if (end_index === -1) {
       throw Error("Unterminated STRING at " + this.pos);
     } else {
-      var tok = {
+      const tok = {
         name: "S",
         value: this.buf.substring(this.pos + 1, end_index),
         pos: this.pos,
@@ -142,14 +143,14 @@ export class Lexer {
 
   skipTokens() {
     while (this.pos < this.buflen) {
-      var c = this.buf.charAt(this.pos);
+      const c = this.buf.charAt(this.pos);
       if (
         c === " " ||
         c === "\t" ||
         c === "\r" ||
         c === "\n" ||
         c === "," ||
-        c === "=" 
+        c === "="
       ) {
         this.pos++;
       } else {
