@@ -19,14 +19,18 @@ export function getStats() {
 }
 
 export function reReadfile() {
-  /*  debugger; */
-  /* if (file) {
+  if (file) {
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = (e) => {
       debugger;
     };
-    reader.readAsArrayBuffer(file);
-  } */
+    const slice = file.slice(-index[113], -index[117]);
+    slice.text().then((result) => {
+      console.log('IDs:', index[112], index[116])
+      console.log(result)
+    });
+    reader.readAsText(slice);
+  }
 }
 
 export function readFile(data: any) {
@@ -102,8 +106,8 @@ export function readFile(data: any) {
           }
 
           if (!id && c[pos] === 35) {
-            pos++;
             rNo = pos;
+            pos++;
             while (c[pos] > 47 && c[pos] < 58) {
               id = id + String.fromCharCode(c[pos]);
               pos++;
@@ -125,7 +129,7 @@ export function readFile(data: any) {
           if (id && c[pos] === 59 && (c[pos + 1] === 10 || c[pos + 1] === 13)) {
             pos++;
             index.push(parseInt(id));
-            index.push(-rNo);
+            index.push(-(readFrom + rNo));
             rNo = 0;
             id = "";
             name = "";
