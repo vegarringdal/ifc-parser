@@ -1,71 +1,123 @@
-import { getLength, lexString } from "./parser";
+let index: number[] = [];
+let names = {};
 
 export function readFile(data: any) {
   console.time("file");
+  index = [];
+  names = {};
   const file = data;
 
   const reader = new FileReader();
-  const encoder = new TextDecoder();
-  const decoder = new TextEncoder();
-  const dataTagBuffer = decoder.encode("DATA;");
-  const dataTagUintArray = new Uint8Array(dataTagBuffer);
-
-  let readFrom = 0;
-  let readTo = 0;
+  const encoder = new TextEncoder();
 
   reader.onload = () => {
     const byteLength = (reader.result as ArrayBuffer).byteLength;
+    const uIntArrayBuffer = new Uint8Array(reader.result as ArrayBuffer);
 
-    // first part we read until we get the data block
-    let i = readFrom;
-    const y = dataTagUintArray;
-    while (i !== byteLength) {
-      const buffer = reader.result.slice(i, i + 5) as ArrayBuffer;
-      const x = new Uint8Array(buffer);
-      //  until we find "DATA;"
-      if (
-        x[0] === y[0] &&
-        x[1] === y[1] &&
-        x[2] === y[2] &&
-        x[3] === y[3] &&
-        x[4] === y[4]
-      ) {
-        readFrom = i + 5; //one extra to skip newline
-        break;
+    function getDataSection(arrBuff: Uint8Array) {
+      const d = encoder.encode("DATA;");
+      let i = 0;
+      let size = arrBuff.byteLength;
+      const c = arrBuff;
+      while (i < size) {
+        if (c[i] === d[0]) {
+          if (c[i + 1] === d[1]) {
+            if (c[i + 2] === d[2]) {
+              if (c[i + 3] === d[3]) {
+                if (c[i + 4] === d[4]) {
+                  return i + 4;
+                }
+              }
+            }
+          }
+        }
+        i++;
       }
-      i++;
+
+      return -1;
+    }
+
+    const dataRowStart = getDataSection(uIntArrayBuffer);
+    if (!dataRowStart) {
+      throw 'ifc file is missing "DATA;" section';
+    }
+
+    function findNextLineSlice(arrBuff: Uint8Array, from: number) {
+      let i = from;
+      let size = arrBuff.byteLength;
+      const c = arrBuff;
+      while (i < size) {
+        if (c[i] === 59 && (c[i + 1] === 10 || c[i + 1] === 13)) {
+          return i + 1;
+        }
+        i++;
+      }
+
+      return size;
     }
 
     // now we have the datablock we will read line by line
-    while (readTo < byteLength) {
-      let i = readFrom + 1000000;
+    let readFrom = dataRowStart;
+    const c = uIntArrayBuffer;
+
+    while (readFrom < byteLength) {
+      let readTo = findNextLineSlice(c, readFrom + 1000000);
       // get next line break
-      while (i !== byteLength) {
-        const buffer = reader.result.slice(i, i + 2) as ArrayBuffer;
-        const x = new Uint8Array(buffer);
-        //  until we find newline/linebreak & ;
-        if (x[0] === 59 && (x[1] === 10 || x[1] === 13)) {
-          readTo = i + 1;
-          break;
+      let id = "";
+      let rNo = 0;
+      let name = "";
+      while (readFrom < readTo) {
+        // if no ID, and not #, then continue
+        if (!id && c[readFrom] !== 35) {
+          readFrom++;
+          continue;
         }
-        if (i >= byteLength) {
-          readTo = byteLength;
-          break;
+
+        if (!id && c[readFrom] === 35) {
+          readFrom++;
+          rNo = readFrom;
+          while (c[readFrom] > 47 && c[readFrom] < 58) {
+            id = id + String.fromCharCode(c[readFrom]);
+            readFrom++;
+          }
         }
-        i = i + 1;
+
+        if (!name && c[readFrom] >= 65 && c[readFrom] <= 90) {
+          while (c[readFrom] >= 65 && c[readFrom] <= 90) {
+            name = name + String.fromCharCode(c[readFrom]);
+            readFrom++;
+          }
+          if (!names[name]) {
+            names[name] = [parseInt(id)];
+          } else {
+            names[name].push(parseInt(id));
+          }
+        }
+
+        if (
+          id &&
+          c[readFrom] === 59 &&
+          (c[readFrom + 1] === 10 || c[readFrom + 1] === 13)
+        ) {
+          readFrom++;
+          index.push(parseInt(id));
+          index.push(-rNo);
+          rNo = 0;
+          id = "";
+          name = "";
+        }
+
+        readFrom++;
       }
-
-      const buffer = reader.result.slice(readFrom, readTo) as ArrayBuffer;
-      let data = encoder.decode(buffer);
-
-      lexString(data);
 
       readFrom = readTo;
     }
   };
   reader.onloadend = () => {
-    getLength();
     console.timeEnd("file");
+    console.log(index[10]);
+    console.log(index[11]);
+    debugger;
   };
   reader.onprogress = (e) => {
     console.log(e);
