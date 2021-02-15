@@ -1,6 +1,6 @@
 import { html } from "lit-html";
 import { customElement } from "@simple-html/core";
-import { getStats, readFile } from "./reader";
+import { getStats, readFile, reReadfile } from "./reader";
 
 @customElement("ifc-reader")
 export class IFCReader extends HTMLElement {
@@ -33,6 +33,7 @@ export class IFCReader extends HTMLElement {
               (performance as any).memory.usedJSHeapSize / Math.pow(1000, 2)
             } MB`;
             this.render();
+            reReadfile()
           }}
           class="p-2 m-2 bg-indigo-300"
         >

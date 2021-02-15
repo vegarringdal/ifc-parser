@@ -1,7 +1,7 @@
 let index: number[] = [];
 let names = {};
 let byteLength = 1; // so we can access it later
-let fileRef
+let file;
 export function getStats() {
   const keys = Object.keys(names);
   const obj: { name: string; length: number }[] = [];
@@ -18,19 +18,31 @@ export function getStats() {
   };
 }
 
+export function reReadfile() {
+  debugger;
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      debugger;
+    };
+    reader.readAsArrayBuffer(file);
+  }
+}
+
 export function readFile(data: any) {
   return new Promise<void>((resolve) => {
     index = [];
     names = {};
-    const file = data;
+    file = data;
 
     const reader = new FileReader();
     const encoder = new TextEncoder();
 
     reader.onload = () => {
-      fileRef = reader.result // this will hold memory, I prb need to slice..
-      byteLength = (reader.result as ArrayBuffer).byteLength;
-      const uIntArrayBuffer = new Uint8Array(reader.result as ArrayBuffer);
+      const fileRef = reader.result as ArrayBuffer; 
+      byteLength = fileRef.byteLength;
+
+      const uIntArrayBuffer = new Uint8Array(fileRef);// this will hold memory, I prb need to slice..
 
       function getDataSection(arrBuff: Uint8Array) {
         const d = encoder.encode("DATA;");
