@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Document</title>
+          <link href="./index.css" rel="stylesheet" />
+         
+          
+    <script>
+      let version = 0;
+      import("./index.js?v=" + version);
+      let connected = false;
+
+      const websocketConnection = function () {
+        const ws = new WebSocket("ws://localhost:8081");
+
+        ws.addEventListener("open", function () {
+          connected = true;
+          ws.send("connect");
+        });
+
+        ws.addEventListener("close", function () {
+          connected = false;
+          console.log("connection lost");
+          websocketConnection();
+        });
+
+        ws.addEventListener("message", function (event) {
+          window.dispatchEvent(new CustomEvent("SIMPLE_HTML_SAVE_STATE"));
+          
+          version++;
+          import("./index.js?v=" + version);
+        });
+
+
+      };
+      websocketConnection();
+    </script>
+        </head>
+        <body>
+        </body>
+        </html>
+        
