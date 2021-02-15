@@ -19,14 +19,14 @@ export function getStats() {
 }
 
 export function reReadfile() {
-  debugger;
-  if (file) {
+  /*  debugger; */
+  /* if (file) {
     const reader = new FileReader();
     reader.onload = () => {
       debugger;
     };
     reader.readAsArrayBuffer(file);
-  }
+  } */
 }
 
 export function readFile(data: any) {
@@ -39,10 +39,10 @@ export function readFile(data: any) {
     const encoder = new TextEncoder();
 
     reader.onload = () => {
-      const fileRef = reader.result as ArrayBuffer; 
+      const fileRef = reader.result as ArrayBuffer;
       byteLength = fileRef.byteLength;
 
-      const uIntArrayBuffer = new Uint8Array(fileRef);// this will hold memory, I prb need to slice..
+      let uIntArrayBuffer = new Uint8Array(fileRef.slice(0, 5000000)); // this will hold memory, I prb need to slice..
 
       function getDataSection(arrBuff: Uint8Array) {
         const d = encoder.encode("DATA;");
@@ -72,64 +72,58 @@ export function readFile(data: any) {
         throw 'ifc file is missing "DATA;" section';
       }
 
-      function findNextLineSlice(arrBuff: Uint8Array, from: number) {
-        let i = from;
-        let size = arrBuff.byteLength;
-        const c = arrBuff;
-        while (i < size) {
-          if (c[i] === 59 && (c[i + 1] === 10 || c[i + 1] === 13)) {
-            return i + 1;
-          }
-          i++;
-        }
-
-        return size;
-      }
-
       // now we have the datablock we will read line by line
       let readFrom = dataRowStart;
-      const c = uIntArrayBuffer;
 
       while (readFrom < byteLength) {
-        let readTo = findNextLineSlice(c, readFrom + 1000000);
+        let readTo = readFrom + 1500000;
+
+        let c;
+
+        while (readTo < byteLength) {
+          c = new Uint8Array(fileRef.slice(readTo, readTo + 2));
+          if (c[0] === 59 && (c[1] === 10 || c[1] === 13)) {
+            break;
+          }
+          readTo++;
+        }
+        c = new Uint8Array(fileRef.slice(readFrom, readTo));
+
         // get next line break
         let id = "";
         let rNo = 0;
         let name = "";
-        while (readFrom < readTo) {
+        let pos = 0;
+        while (pos < c.length) {
           // if no ID, and not #, then continue
-          if (!id && c[readFrom] !== 35) {
-            readFrom++;
+          if (!id && c[pos] !== 35) {
+            pos++;
             continue;
           }
 
-          if (!id && c[readFrom] === 35) {
-            readFrom++;
-            rNo = readFrom;
-            while (c[readFrom] > 47 && c[readFrom] < 58) {
-              id = id + String.fromCharCode(c[readFrom]);
-              readFrom++;
+          if (!id && c[pos] === 35) {
+            pos++;
+            rNo = pos;
+            while (c[pos] > 47 && c[pos] < 58) {
+              id = id + String.fromCharCode(c[pos]);
+              pos++;
             }
           }
 
-          /* if (!name && c[readFrom] >= 65 && c[readFrom] <= 90) {
-            while (c[readFrom] >= 65 && c[readFrom] <= 90) {
-              name = name + String.fromCharCode(c[readFrom]);
-              readFrom++;
+          if (!name && c[pos] >= 65 && c[pos] <= 90) {
+            while (c[pos] >= 65 && c[pos] <= 90) {
+              name = name + String.fromCharCode(c[pos]);
+              pos++;
             }
             if (!names[name]) {
               names[name] = [parseInt(id)];
             } else {
               names[name].push(parseInt(id));
             }
-          } */
+          }
 
-          if (
-            id &&
-            c[readFrom] === 59 &&
-            (c[readFrom + 1] === 10 || c[readFrom + 1] === 13)
-          ) {
-            readFrom++;
+          if (id && c[pos] === 59 && (c[pos + 1] === 10 || c[pos + 1] === 13)) {
+            pos++;
             index.push(parseInt(id));
             index.push(-rNo);
             rNo = 0;
@@ -137,7 +131,7 @@ export function readFile(data: any) {
             name = "";
           }
 
-          readFrom++;
+          pos++;
         }
 
         readFrom = readTo;
