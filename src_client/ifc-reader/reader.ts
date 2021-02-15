@@ -42,7 +42,7 @@ export function readFile(data: any) {
       const fileRef = reader.result as ArrayBuffer;
       byteLength = fileRef.byteLength;
 
-      let uIntArrayBuffer = new Uint8Array(fileRef.slice(0, 5000000)); // this will hold memory, I prb need to slice..
+      let uIntArrayBuffer = new Uint8Array(fileRef.slice(0, 2000000)); // this will hold memory, I prb need to slice..
 
       function getDataSection(arrBuff: Uint8Array) {
         const d = encoder.encode("DATA;");
@@ -76,7 +76,7 @@ export function readFile(data: any) {
       let readFrom = dataRowStart;
 
       while (readFrom < byteLength) {
-        let readTo = readFrom + 1500000;
+        let readTo = readFrom + 4500000;
 
         let c;
 
