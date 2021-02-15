@@ -1,6 +1,7 @@
 let index: number[] = [];
 let names = {};
-let uIntArrayBuffer = null; // so we can access it later
+let byteLength = 1; // so we can access it later
+let fileRef
 export function getStats() {
   const keys = Object.keys(names);
   const obj: { name: string; length: number }[] = [];
@@ -8,10 +9,13 @@ export function getStats() {
     obj.push({
       name: key,
       length: names[key].length,
-      fileMB: uIntArrayBuffer.byteLength / 1000000,
     });
   });
-  return { names: obj, total: index.length / 2 };
+  return {
+    names: obj,
+    total: index.length / 2,
+    fileMB: parseInt((byteLength / (1024 * 1024)) as any),
+  };
 }
 
 export function readFile(data: any) {
@@ -24,8 +28,9 @@ export function readFile(data: any) {
     const encoder = new TextEncoder();
 
     reader.onload = () => {
-      const byteLength = (reader.result as ArrayBuffer).byteLength;
-      uIntArrayBuffer = new Uint8Array(reader.result as ArrayBuffer);
+      fileRef = reader.result // this will hold memory, I prb need to slice..
+      byteLength = (reader.result as ArrayBuffer).byteLength;
+      const uIntArrayBuffer = new Uint8Array(reader.result as ArrayBuffer);
 
       function getDataSection(arrBuff: Uint8Array) {
         const d = encoder.encode("DATA;");
@@ -95,7 +100,7 @@ export function readFile(data: any) {
             }
           }
 
-          if (!name && c[readFrom] >= 65 && c[readFrom] <= 90) {
+          /* if (!name && c[readFrom] >= 65 && c[readFrom] <= 90) {
             while (c[readFrom] >= 65 && c[readFrom] <= 90) {
               name = name + String.fromCharCode(c[readFrom]);
               readFrom++;
@@ -105,7 +110,7 @@ export function readFile(data: any) {
             } else {
               names[name].push(parseInt(id));
             }
-          }
+          } */
 
           if (
             id &&

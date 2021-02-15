@@ -4,7 +4,9 @@ import { getStats, readFile } from "./reader";
 
 @customElement("ifc-reader")
 export class IFCReader extends HTMLElement {
-  memory = `${performance.memory.usedJSHeapSize / Math.pow(1000, 2)} MB`;
+  memory = `${
+    (performance as any).memory.usedJSHeapSize / Math.pow(1000, 2)
+  } MB`;
   memoryAfter = "tba";
   time = 0;
   stats: {
@@ -28,7 +30,7 @@ export class IFCReader extends HTMLElement {
         <button
           @click=${() => {
             this.memoryAfter = `${
-              performance.memory.usedJSHeapSize / Math.pow(1000, 2)
+              (performance as any).memory.usedJSHeapSize / Math.pow(1000, 2)
             } MB`;
             this.render();
           }}
@@ -40,8 +42,8 @@ export class IFCReader extends HTMLElement {
       <div class="flex flex-col border-1 border-gray-400 p-2 m-2">
         <span>memory before: ${this.memory}</span>
         <span>memory after file: ${this.memoryAfter}</span>
-        <span>file size: ${this.memoryAfter}</span>
-        <span>runtime openfile: ${this.stats?.fileMB}</span>
+        <span>file size: ${this.stats?.fileMB}</span>
+        <span>runtime openfile: ${this.time}</span>
         <span>total ids: ${this.stats?.total}</span>
       </div>
 
@@ -68,7 +70,7 @@ export class IFCReader extends HTMLElement {
     await readFile(file);
     this.time = performance.now() - v1;
     this.memoryAfter = `${
-      performance.memory.usedJSHeapSize / Math.pow(1000, 2)
+      (performance as any).memory.usedJSHeapSize / Math.pow(1000, 2)
     } MB`;
 
     this.stats = getStats();
