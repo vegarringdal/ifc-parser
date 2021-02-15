@@ -1,4 +1,4 @@
-// this is just a little weird project, took some lexer I found somewhere and rebuild it a little
+/* // this is just a little weird project, took some lexer I found somewhere and rebuild it a little
 
 export class Lexer {
   pos: number;
@@ -159,3 +159,4 @@ export class Lexer {
     }
   }
 }
+ */

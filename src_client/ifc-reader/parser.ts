@@ -1,7 +1,6 @@
-import { Lexer } from "./lexer";
+/* import { Lexer } from "./lexer";
 
-
-let dataRows= new Map()
+let dataRows = new Map();
 let ifcRelContainedInSpatialStructure: number[] = [];
 
 export function getRow(no: number) {
@@ -13,8 +12,7 @@ export function getIfcRelContainedInSpatialStructureIDs() {
 }
 
 export function getLength() {
-  // lets print one to test
-
+  // lets print one to testa
 
   console.log(
     "ifcRelContainedInSpatialStructure count:" +
@@ -32,7 +30,7 @@ function processLine(tokens: any[]) {
 
   if (tokens[2] && tokens[2].value === "(") {
     let args = [];
-    args.push(NAME)
+    args.push(NAME);
     for (let i = 3; i < tokens.length; i++) {
       if (tokens[i].value !== "(" && tokens[i].value !== ")") {
         args.push(tokens[i].value);
@@ -50,7 +48,7 @@ function processLine(tokens: any[]) {
     }
 
     if (ID && ID.value) {
-      dataRows.set(ID.value, {args});
+      dataRows.set(ID.value, { args });
       if (NAME.value === "IFCRELCONTAINEDINSPATIALSTRUCTURE") {
         ifcRelContainedInSpatialStructure.push(dataRows.size - 1);
       }
@@ -79,3 +77,4 @@ export function lexString(d: string) {
 
   // do something with data?
 }
+ */
