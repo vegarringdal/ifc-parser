@@ -1,11 +1,15 @@
 let index: number[] = [];
 let names = {};
-
+let uIntArrayBuffer = null; // so we can access it later
 export function getStats() {
   const keys = Object.keys(names);
   const obj: { name: string; length: number }[] = [];
   keys.forEach((key) => {
-    obj.push({ name: key, length: names[key].length });
+    obj.push({
+      name: key,
+      length: names[key].length,
+      fileMB: uIntArrayBuffer.byteLength / 1000000,
+    });
   });
   return { names: obj, total: index.length / 2 };
 }
@@ -21,7 +25,7 @@ export function readFile(data: any) {
 
     reader.onload = () => {
       const byteLength = (reader.result as ArrayBuffer).byteLength;
-      const uIntArrayBuffer = new Uint8Array(reader.result as ArrayBuffer);
+      uIntArrayBuffer = new Uint8Array(reader.result as ArrayBuffer);
 
       function getDataSection(arrBuff: Uint8Array) {
         const d = encoder.encode("DATA;");

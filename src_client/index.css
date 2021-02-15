@@ -10,3 +10,7 @@ app-root {
   bottom: 0;
   @apply bg-gray-100;
 }
+
+input[type="file"] {
+  display: none;
+}
