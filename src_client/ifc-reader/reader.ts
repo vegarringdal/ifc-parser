@@ -1,7 +1,7 @@
 let index: number[] = [];
 let names = {};
 let byteLength = 1; // so we can access it later
-let file;
+let file: File;
 export function getStats() {
   const keys = Object.keys(names);
   const obj: { name: string; length: number }[] = [];
@@ -18,18 +18,13 @@ export function getStats() {
   };
 }
 
-export function reReadfile() {
+export async function reReadfile(showID: number) {
   if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      debugger;
-    };
-    const slice = file.slice(-index[113], -index[117]);
-    slice.text().then((result) => {
-      console.log('IDs:', index[112], index[116])
-      console.log(result)
-    });
-    reader.readAsText(slice);
+    let i = index.indexOf(showID);
+    const slice = file.slice(-index[i + 1], -index[i + 3]);
+    return slice.text();
+  } else {
+    return "no file loaded";
   }
 }
 

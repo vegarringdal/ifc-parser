@@ -14,6 +14,7 @@ export class IFCReader extends HTMLElement {
     total: number;
     fileMB: number;
   };
+  text = "";
 
   public render() {
     return html`
@@ -33,12 +34,23 @@ export class IFCReader extends HTMLElement {
               (performance as any).memory.usedJSHeapSize / Math.pow(1000, 2)
             } MB`;
             this.render();
-            reReadfile()
           }}
           class="p-2 m-2 bg-indigo-300"
         >
           update heap
         </button>
+        <input
+          @change=${(e: any) => {
+            reReadfile(e.target.valueAsNumber).then((result) => {
+              this.text = result;
+              this.render();
+            });
+          }}
+          class="p-2 m-2 bg-indigo-300"
+          type="number"
+          minlength="0"
+        />
+        <span style="width:250px" class="overflow-wrap">${this.text}</span>
       </div>
       <div class="flex flex-col border-1 border-gray-400 p-2 m-2">
         <span>memory before: ${this.memory}</span>
@@ -68,6 +80,7 @@ export class IFCReader extends HTMLElement {
   async openFile(e: any) {
     const file: File = e.target.files[0];
     const v1 = performance.now();
+    this.text = "";
     await readFile(file);
     this.time = performance.now() - v1;
     this.memoryAfter = `${
