@@ -50,7 +50,7 @@ export class IFCReader extends HTMLElement {
           type="number"
           minlength="0"
         />
-        <span style="width:250px" class="overflow-wrap">${this.text}</span>
+        <span style="width:250px" class="break-words">${this.text}</span>
       </div>
       <div class="flex flex-col border-1 border-gray-400 p-2 m-2">
         <span>memory before: ${this.memory}</span>
