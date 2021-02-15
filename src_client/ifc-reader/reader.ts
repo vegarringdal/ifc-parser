@@ -140,6 +140,8 @@ export function readFile(data: any) {
     reader.onloadend = () => {
       resolve();
     };
+
+    // I probably should have sliced it here first to use less memory, and parsed it several times
     reader.readAsArrayBuffer(file);
   });
 }
