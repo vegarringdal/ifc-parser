@@ -1,7 +1,7 @@
 import { Lexer } from "./lexer";
-import { proxyController } from "./proxyController";
 
-let dataRows: any[] = [];
+
+let dataRows= new Map()
 let ifcRelContainedInSpatialStructure: number[] = [];
 
 export function getRow(no: number) {
@@ -15,20 +15,15 @@ export function getIfcRelContainedInSpatialStructureIDs() {
 export function getLength() {
   // lets print one to test
 
-  const x = dataRows[ifcRelContainedInSpatialStructure[0]];
-  console.log("-------------------------------------------");
-  console.log("ifcRelContainedInSpatialStructure Sample:");
-  console.log("ID:", x.id);
-  console.log(x.args);
-  console.log("-------------------------------------------");
+
   console.log(
     "ifcRelContainedInSpatialStructure count:" +
       ifcRelContainedInSpatialStructure.length
   );
   console.log("-------------------------------------------");
-  console.log("total datarow count:" + dataRows.length);
+  console.log("total datarow count:" + dataRows.size);
 
-  return dataRows.length;
+  return dataRows.size;
 }
 
 function processLine(tokens: any[]) {
@@ -37,6 +32,7 @@ function processLine(tokens: any[]) {
 
   if (tokens[2] && tokens[2].value === "(") {
     let args = [];
+    args.push(NAME)
     for (let i = 3; i < tokens.length; i++) {
       if (tokens[i].value !== "(" && tokens[i].value !== ")") {
         args.push(tokens[i].value);
@@ -54,9 +50,9 @@ function processLine(tokens: any[]) {
     }
 
     if (ID && ID.value) {
-      dataRows.push(proxyController(ID.value, NAME.value, args));
+      dataRows.set(ID.value, {args});
       if (NAME.value === "IFCRELCONTAINEDINSPATIALSTRUCTURE") {
-        ifcRelContainedInSpatialStructure.push(dataRows.length - 1);
+        ifcRelContainedInSpatialStructure.push(dataRows.size - 1);
       }
     }
   }
