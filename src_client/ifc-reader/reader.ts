@@ -1,4 +1,6 @@
 let index: number[] = [];
+let m = {};
+
 let names = {};
 let byteLength = 1; // so we can access it later
 let file: File;
@@ -20,9 +22,11 @@ export function getStats() {
 
 export async function reReadfile(showID: number) {
   if (file) {
-    let i = index.indexOf(showID);
-    const slice = file.slice(-index[i + 1], -index[i + 3]);
-    return slice.text();
+    console.time("blobsplice");
+    const slice = file.slice(-index[m[showID] + 1], -index[m[showID] + 3]);
+    const x = await slice.text();
+    console.timeEnd("blobsplice");
+    return x;
   } else {
     return "no file loaded";
   }
@@ -38,6 +42,7 @@ export function readFile(data: any) {
     const encoder = new TextEncoder();
 
     reader.onload = () => {
+      console.timeEnd("start read");
       const fileRef = reader.result as ArrayBuffer;
       byteLength = fileRef.byteLength;
 
@@ -124,6 +129,7 @@ export function readFile(data: any) {
           if (id && c[pos] === 59 && (c[pos + 1] === 10 || c[pos + 1] === 13)) {
             pos++;
             index.push(parseInt(id));
+            m[parseInt(id)] = index.length - 1;
             index.push(-(readFrom + rNo));
             rNo = 0;
             id = "";
@@ -141,6 +147,7 @@ export function readFile(data: any) {
     };
 
     // I probably should have sliced it here first to use less memory, and parsed it several times
+    console.time("start read");
     reader.readAsArrayBuffer(file);
   });
 }

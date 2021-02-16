@@ -1354,6 +1354,7 @@
 
   // src_client/ifc-reader/reader.ts
   var index = [];
+  var m = {};
   var names = {};
   var byteLength = 1;
   var file;
@@ -1374,9 +1375,11 @@
   }
   async function reReadfile(showID) {
     if (file) {
-      let i = index.indexOf(showID);
-      const slice = file.slice(-index[i + 1], -index[i + 3]);
-      return slice.text();
+      console.time("blobsplice");
+      const slice = file.slice(-index[m[showID] + 1], -index[m[showID] + 3]);
+      const x = await slice.text();
+      console.timeEnd("blobsplice");
+      return x;
     } else {
       return "no file loaded";
     }
@@ -1389,6 +1392,7 @@
       const reader = new FileReader();
       const encoder = new TextEncoder();
       reader.onload = () => {
+        console.timeEnd("start read");
         const fileRef = reader.result;
         byteLength = fileRef.byteLength;
         let uIntArrayBuffer = new Uint8Array(fileRef.slice(0, 2e6));
@@ -1460,6 +1464,7 @@
             if (id && c[pos] === 59 && (c[pos + 1] === 10 || c[pos + 1] === 13)) {
               pos++;
               index.push(parseInt(id));
+              m[parseInt(id)] = index.length - 1;
               index.push(-(readFrom + rNo));
               rNo = 0;
               id = "";
@@ -1473,6 +1478,7 @@
       reader.onloadend = () => {
         resolve();
       };
+      console.time("start read");
       reader.readAsArrayBuffer(file);
     });
   }
